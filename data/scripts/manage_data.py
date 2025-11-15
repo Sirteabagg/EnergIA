@@ -1,10 +1,12 @@
 import pandas as pd
 import numpy as np
 
+
+
 def clean_data():
     # Load data
     # 1. Chargement du dataset brut
-    df = pd.read_csv('data/raw/energy_data_global.csv')
+    df = df_origin = pd.read_csv('data/raw/energy_data_global.csv')
 
     # 2. Génération des tables de référence Building et Sensor
     # Bâtiment
@@ -28,21 +30,29 @@ def clean_data():
     df = df[df['power_consumption'] >= 0]
     df = df[df['temperature'] >= 0]
 
-    # Suppression des outliers sur la puissance : filtre interquartile
-    Q1 = df['power_consumption'].quantile(0.25)
-    Q3 = df['power_consumption'].quantile(0.75)
-    IQR = Q3 - Q1
-    upper_limit = Q3 + 1.5 * IQR
-    df = df[df['power_consumption'] < upper_limit]
-
     # 4. Remplacement des identifiants par les ID numériques
-    # Building
-    mapping_building = dict(zip(df_building['name'], df_building['building_id']))
-    df['building_id'] = df['building_id'].replace(mapping_building)
-    # Sensor
-    mapping_sensor = dict(zip(df_sensor['name'], df_sensor['sensor_id']))
-    df['sensor_id'] = df['sensor_id'].replace(mapping_sensor)
+    # replace Building_id by there id in buidling.csv B001 = 0, B002 = 1, B003 = 2 etc
+    mapping_dict = dict(zip(df_building['name'], df_building['building_id']))
+
+    df['building_id'] = df['building_id'].replace(mapping_dict)
+    df_origin['building_id'] = df_origin['building_id'].replace(mapping_dict)
 
 
+    # replace Sensor_id by there id in sensor.csv S01 = 0, S02 = 1, S03 = 2 etc
+    mapping_dict = dict(zip(df_sensor['name'], df_sensor['sensor_id']))
+
+    df['sensor_id'] = df['sensor_id'].replace(mapping_dict)
+    df_origin['sensor_id'] = df_origin['sensor_id'].replace(mapping_dict)
+
+    df_removed = (
+        df_origin
+        .merge(df, how='outer', indicator=True)
+        .query("_merge == 'left_only'")
+        .drop(columns=["_merge"])
+    )
+
+
+    
     # 5. Sauvegarde du jeu de données nettoyé et prêt
     df.to_csv('data/processed/clean_global.csv', index=False)
+    df_removed.to_csv('data/processed/error_measure.csv', index=False)   

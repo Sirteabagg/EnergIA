@@ -10,10 +10,10 @@ import manage_data
 manage_data.clean_data()
 
 # Connexion à MySQL
-conn = pymysql.connect(host="localhost", user="root", password="root", database="EngIA")
+conn = pymysql.connect(host="localhost", user="root", password="root", database="EnergIA")
 cur = conn.cursor()
 
-files = {"Building": "building.csv", "Sensor": "sensor.csv", "Measure": "clean_global.csv"}
+files = {"Building": "building.csv", "Sensor": "sensor.csv", "Measure": "clean_global.csv", "Error": "error_measure.csv"}
 for file in files:
     with open("data/processed/" + files[file], "r", newline='') as csvfile:
         reader = csv.reader(csvfile)
@@ -23,6 +23,7 @@ for file in files:
         columns = ", ".join(header)                
         placeholders = ", ".join(["%s"] * len(header)) 
         for row in reader:
+            row = [None if v == '' else v for v in row]
             sql = f"""
                 INSERT INTO {file}
                 ({columns})
