@@ -40,4 +40,21 @@ BEGIN
     HAVING AVG(power_consumption) > (SELECT AVG(power_consumption) FROM Measure);
 END;$$
 
-DELIMITER 
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS get_building_info_by_id;
+DELIMITER $$
+CREATE PROCEDURE get_building_info_by_id(IN p_building_id INT)
+BEGIN
+    SELECT
+        timestamp,
+        temperature,
+        humidity,
+        power_consumption
+    FROM Measure 
+   	WHERE building_id = p_building_id
+   	ORDER BY timestamp ASC;
+   
+END $$
+
+DELIMITER ;
