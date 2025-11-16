@@ -1,14 +1,20 @@
 package com.example.api.dto;
 
-public class SensorDTO {
-    private int id;
-    private String name;
+import com.example.api.dao.MeasureDAO;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-    public SensorDTO(int id, String name) {
-        this.id = id;
+import java.util.List;
+
+@JsonPropertyOrder({"name", "measures"})
+public class SensorDTO {
+    private String name;
+    private List<MeasureDAO.Measure> sensorMeasure;
+
+    public SensorDTO(String name, List<MeasureDAO.Measure> sensorMeasure) {
         this.name = name;
+        this.sensorMeasure = sensorMeasure;
     }
 
-    public int getId() { return id; }
     public String getName() { return name; }
+    public List<MeasureDAO.Measure> getMeasures() { return this.sensorMeasure; }
 }

@@ -1,15 +1,23 @@
 package com.example.api.dto;
 
+import com.example.api.dao.MeasureDAO;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import java.util.List;
+
+@JsonPropertyOrder({"name", "measures"})
 public class BuildingDTO {
 
-    private int id;
-    private String name;
+    private String building_name;
+    private List<MeasureDAO.Measure> buildingMeasures;
+    // getters & setters
 
-    public BuildingDTO(int id, String name) {
-        this.id = id;
-        this.name = name;
+    public BuildingDTO(String building_name, List<MeasureDAO.Measure> buildingMeasures) {
+        this.building_name = building_name;
+        this.buildingMeasures = buildingMeasures;
     }
 
-    public int getId() { return id; }
-    public String getName() { return name; }
+    // Getters
+    public String getName() { return this.building_name; }
+    public List<MeasureDAO.Measure> getMeasures() { return this.buildingMeasures; }
+
 }
