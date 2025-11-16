@@ -46,4 +46,17 @@ public class SensorDAO {
         }
     }
 
+    public int getNumberOfSensors() throws SQLException {
+        String sql = "SELECT COUNT(sensor_id) FROM Sensor";
+        try (Connection conn = connectionDAO.getConnection();
+        PreparedStatement stmt = conn.prepareStatement(sql)) {
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+                return 0;
+            }
+        }
+    }
+
 }

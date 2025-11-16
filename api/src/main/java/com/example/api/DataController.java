@@ -1,9 +1,7 @@
 package com.example.api;
 
-import com.example.api.dao.BuildingDAO;
-import com.example.api.dao.ConnectionDAO;
-import com.example.api.dao.MeasureDAO;
-import com.example.api.dao.SensorDAO;
+import com.example.api.dao.*;
+import com.example.api.dto.BuildingAverageDTO;
 import com.example.api.dto.SensorDTO;
 import com.example.api.dto.BuildingDTO;
 
@@ -18,10 +16,7 @@ import java.util.List;
 @RequestMapping("/data")
 public class DataController {
     @GetMapping("/summary")
-    public SummaryDTO getSummary(
-            @RequestParam String startDate,
-            @RequestParam String endDate
-    ) {
+    public SummaryDTO getSummary() {
         // Remplace par tes vrais identifiants
         String dbUser = "root";
         String dbPassword = "root";
@@ -29,23 +24,51 @@ public class DataController {
         // On crée la connexion à la base EnergIA
         ConnectionDAO connectionDAO = ConnectionDAO.getInstance(dbName, dbUser, dbPassword);
         MeasureDAO measureDAO = new MeasureDAO(connectionDAO);
+        BuildingDAO buildingDAO = new BuildingDAO(connectionDAO);
+        SensorDAO sensorDAO = new SensorDAO(connectionDAO);
+        ErrorDAO errorDAO = new ErrorDAO(connectionDAO);
 
-        // Tu peux mettre à jour ici:
-        int buildings = 0; // À remplacer plus tard par buildingDAO.countBuildings()
+        int buildings = 0;
         int sensors = 0;
         int anomalies = 0;
+        float averageHumidityGlobal;
+        float averageTemperatureGlobal;
+        float averagePowerConsumptionGlobal;
 
-        List<MeasureDAO.AverageConsumption> averages = null;
+        List<Float> listAverages;
+
+        List<BuildingAverageDTO> buildingAverages = new ArrayList<>();
+
+        List<Integer> buildingIds;
+
+        String buildingName = "";
+        List<Float> buildingAverage;
         try {
-            averages = measureDAO.getAverageConsumptionByBuilding(startDate, endDate);
+            buildings = buildingDAO.getNumberOfBuildings();
+            sensors = sensorDAO.getNumberOfSensors();
+            anomalies = errorDAO.getNumberAnomalies();
+            listAverages = measureDAO.getAverageMeasures();
+            averageHumidityGlobal = listAverages.get(0);
+            averageTemperatureGlobal = listAverages.get(1);
+            averagePowerConsumptionGlobal = listAverages.get(2);
+
+            buildingIds = buildingDAO.getAllIds();
+
+            for (Integer buildingId : buildingIds) {
+                buildingName = buildingDAO.getBuildingNameById(buildingId);
+                buildingAverage = measureDAO.getAverageMeasureByBuilding(buildingId);
+                buildingAverages.add(new BuildingAverageDTO(buildingName, buildingAverage.get(0), buildingAverage.get(1), buildingAverage.get(2)));
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
-            // Gère l'erreur, éventuellement renvoie une 500
             return null;
         }
 
 
-        return new SummaryDTO(buildings, sensors, anomalies, averages);
+        return new SummaryDTO(buildings, sensors, anomalies,
+                averageHumidityGlobal, averageTemperatureGlobal, averagePowerConsumptionGlobal,
+                buildingAverages);
     }
 
 

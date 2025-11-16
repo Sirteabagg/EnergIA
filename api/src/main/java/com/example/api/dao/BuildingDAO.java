@@ -1,6 +1,8 @@
 package com.example.api.dao;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BuildingDAO {
 
@@ -27,5 +29,31 @@ public class BuildingDAO {
         }
     }
 
+    public int getNumberOfBuildings() throws SQLException {
+        String sql = "SELECT COUNT(*) FROM Building";
+        try (Connection conn = connectionDAO.getConnection();
+        PreparedStatement stmt = conn.prepareStatement(sql)) {
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+                return 0;
+            }
+        }
+    }
+
+    public List<Integer> getAllIds() throws SQLException {
+        String sql = "SELECT building_id FROM Building";
+        try (Connection conn = connectionDAO.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            try (ResultSet rs = stmt.executeQuery()) {
+                List<Integer> ids = new ArrayList<>();
+                while (rs.next()) {
+                    ids.add(rs.getInt("building_id"));
+                }
+                return ids;
+            }
+        }
+    }
 
 }

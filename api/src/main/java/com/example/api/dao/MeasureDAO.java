@@ -85,7 +85,7 @@ public class MeasureDAO {
         try (Connection conn = connectionDAO.getConnection();
              CallableStatement stmt = conn.prepareCall(sql)) {
 
-            stmt.setInt(1, idSensor); // format: "2025-01-01"
+            stmt.setInt(1, idSensor);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
@@ -99,6 +99,45 @@ public class MeasureDAO {
         }
         return result;
     }
+
+    public List<Float> getAverageMeasures() throws SQLException {
+        String sql = "SELECT AVG(humidity), AVG(temperature), AVG(power_consumption) FROM Measure;";
+        try (Connection conn = connectionDAO.getConnection();
+        CallableStatement stmt = conn.prepareCall(sql)) {
+            List<Float> averages = new ArrayList<>();
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    averages.add(rs.getFloat("AVG(humidity)"));
+                    averages.add(rs.getFloat("AVG(temperature)"));
+                    averages.add(rs.getFloat("AVG(power_consumption)"));
+                    return averages;
+                }
+                return null;
+            }
+        }
+    }
+
+    public List<Float> getAverageMeasureByBuilding(int idBuilding) throws SQLException {
+        String sql = "SELECT AVG(humidity), AVG(temperature), AVG(power_consumption) FROM Measure" +
+                " WHERE building_id = ?;";
+        try (Connection conn = connectionDAO.getConnection();
+        CallableStatement stmt = conn.prepareCall(sql)) {
+            stmt.setInt(1, idBuilding);
+
+            List<Float> averages = new ArrayList<>();
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    averages.add(rs.getFloat("AVG(humidity)"));
+                    averages.add(rs.getFloat("AVG(temperature)"));
+                    averages.add(rs.getFloat("AVG(power_consumption)"));
+                    return averages;
+                }
+                return null;
+            }
+        }
+    }
+
+
 
     public static class Measure {
         public String timestamp;

@@ -7,23 +7,32 @@ public class SummaryDTO {
     private int buildings;
     private int sensors;
     private int anomalies;
-    private float average;
-    private float std;
+    private float averageHumidityGlobal;
+    private float averageTemperatureGlobal;
+    private float averagePowerConsumptionGlobal;
+
+    private List<BuildingAverageDTO> buildingAverages;
 
     private List<MeasureDAO.AverageConsumption> averages;
 
-    public SummaryDTO() {}
-
-    public SummaryDTO(int buildings, int sensors, int anomalies, List<MeasureDAO.AverageConsumption> averages) {
+    public SummaryDTO(int buildings, int sensors, int anomalies, float averageHumidityGlobal,
+                      float averageTemperatureGlobal, float averagePowerConsumptionGlobal,
+                      List<BuildingAverageDTO> buildingAverages) {
         this.buildings = buildings;
         this.sensors = sensors;
         this.anomalies = anomalies;
-        this.averages = averages;
+        this.averageHumidityGlobal = averageHumidityGlobal;
+        this.averageTemperatureGlobal = averageTemperatureGlobal;
+        this.averagePowerConsumptionGlobal = averagePowerConsumptionGlobal;
+        this.buildingAverages = buildingAverages;
     }
 
     // Getters
     public int getBuildings() { return buildings; }
     public int getSensors() { return sensors; }
     public int getAnomalies() { return anomalies; }
-    public List<MeasureDAO.AverageConsumption> getAverages() { return averages; }
+    public float getAverageHumidityGlobal() { return averageHumidityGlobal; }
+    public float getAverageTemperatureGlobal() { return averageTemperatureGlobal; }
+    public float getAveragePowerConsumptionGlobal() { return averagePowerConsumptionGlobal; }
+    public List<BuildingAverageDTO> getAverages() { return buildingAverages; }
 }
