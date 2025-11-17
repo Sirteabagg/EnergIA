@@ -56,4 +56,18 @@ public class BuildingDAO {
         }
     }
 
+    public List<String> getOverconsummingBuilding() throws SQLException {
+        String sql = "CALL get_buildings_with_overconsumption();";
+        try (Connection conn = connectionDAO.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            try (ResultSet rs = stmt.executeQuery()) {
+                List<String> building = new ArrayList<>();
+                while (rs.next()) {
+                    building.add(rs.getString("name"));
+                }
+                return building;
+            }
+        }
+    }
+
 }

@@ -1,14 +1,16 @@
 package com.example.api;
 
 import com.example.api.dao.*;
-import com.example.api.dto.BuildingAverageDTO;
-import com.example.api.dto.SensorDTO;
-import com.example.api.dto.BuildingDTO;
+import com.example.api.dto.*;
 
-import com.example.api.dto.SummaryDTO;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -71,7 +73,47 @@ public class DataController {
                 buildingAverages);
     }
 
+    @GetMapping("/data/building")
+    public BuildingAvgPeriodDTO getAverageConsumptionByBuilding(
+            @RequestParam("start") String startDate,
+            @RequestParam("end") String endDate
+    ) {
+        String dbUser = "root";
+        String dbPassword = "root";
+        String dbName = "EnergIA";
+        ConnectionDAO connectionDAO = ConnectionDAO.getInstance(dbName, dbUser, dbPassword);
+        MeasureDAO measureDAO = new MeasureDAO(connectionDAO);
 
+        List<MeasureDAO.AverageConsumption> rawResults = new ArrayList<>();
+
+        try {
+            // Recupère la moyenne par batiment entre start/end en une seule requête
+            rawResults = measureDAO.getAverageConsumptionByBuilding(startDate, endDate);
+
+            return new BuildingAvgPeriodDTO(startDate, endDate, rawResults);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return (BuildingAvgPeriodDTO) Collections.emptyList();
+    }
+
+    @GetMapping("/data/building/overconsumption")
+    public List<String> getAverageConsumptionByBuilding() {
+        String dbUser = "root";
+        String dbPassword = "root";
+        String dbName = "EnergIA";
+        ConnectionDAO connectionDAO = ConnectionDAO.getInstance(dbName, dbUser, dbPassword);
+        BuildingDAO buildingDAO = new BuildingDAO(connectionDAO);
+        List<MeasureDAO.AverageConsumption> rawResults = new ArrayList<>();
+
+        try {
+            // Recupère la moyenne par batiment entre start/end en une seule requête
+            return buildingDAO.getOverconsummingBuilding();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Collections.emptyList();
+    }
 
     @GetMapping("/buildings/{id}")
     public BuildingDTO getBuilding(@PathVariable int id) {
@@ -127,4 +169,36 @@ public class DataController {
 
         return sensorsMeasures;
     }
+
+    @RestController
+    @RequestMapping("/api/v1/python-script")
+    public class PythonScriptController {
+
+        @GetMapping("/run")
+        public ResponseEntity<String> runPythonScript() {
+            try {
+                ProcessBuilder processBuilder = new ProcessBuilder("python3", "../../../../");
+                processBuilder.redirectErrorStream(true);
+                Process process = processBuilder.start();
+
+                // Capture output
+                BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                StringBuilder output = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    output.append(line).append("\n");
+                }
+                int exitCode = process.waitFor();
+                if (exitCode == 0) {
+                    return ResponseEntity.ok(output.toString());
+                } else {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body("Erreur lors de l'exécution du script Python:\n" + output);
+                }
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            }
+        }
+    }
+
 }

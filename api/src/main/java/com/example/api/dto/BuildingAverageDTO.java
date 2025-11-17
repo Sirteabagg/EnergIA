@@ -18,3 +18,4 @@ public class BuildingAverageDTO {
     public float getAverageTemperature() { return averageTemperature; }
     public float getAveragePowerConsumption() { return averagePowerConsumption; }
 }
+

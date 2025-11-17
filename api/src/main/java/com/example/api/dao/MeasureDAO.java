@@ -18,7 +18,7 @@ public class MeasureDAO {
     public static List<AverageConsumption> getAverageConsumptionByBuilding(String startDate, String endDate) throws SQLException {
         List<AverageConsumption> result = new ArrayList<>();
 
-        String sql = "{CALL get_average_consumption_by_building(?, ?)}";
+        String sql = "{CALL average_consumption_by_building(?, ?)}";
         // Essaie d'utiliser la connexion via ton DAO
         try (Connection conn = connectionDAO.getConnection();
              CallableStatement stmt = conn.prepareCall(sql)) {
@@ -28,9 +28,9 @@ public class MeasureDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    int buildingId = rs.getInt("building_id");
-                    double average = rs.getDouble("average_consumption");
-                    result.add(new AverageConsumption(buildingId, average));
+                    String buildingName = rs.getString("building_name");
+                    double average = rs.getDouble("avg_consumption");
+                    result.add(new AverageConsumption(buildingName, average));
                 }
             }
         }
@@ -42,11 +42,11 @@ public class MeasureDAO {
 
     // À adapter selon ce que tu veux en sortie
     public static class AverageConsumption {
-        public int buildingId;
+        public String buildingName;
         public double averageConsumption;
 
-        public AverageConsumption(int buildingId, double averageConsumption) {
-            this.buildingId = buildingId;
+        public AverageConsumption(String buildingName, double averageConsumption) {
+            this.buildingName = buildingName;
             this.averageConsumption = averageConsumption;
         }
     }
@@ -136,6 +136,7 @@ public class MeasureDAO {
             }
         }
     }
+
 
 
 
