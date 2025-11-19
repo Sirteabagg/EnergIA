@@ -14,6 +14,7 @@ CREATE TABLE Measure (
     temperature FLOAT,
     humidity FLOAT,
     power_consumption FLOAT,
+    value FLOAT,
     building_id INT,
     sensor_id INT,
     FOREIGN KEY (building_id) REFERENCES Building(building_id),
