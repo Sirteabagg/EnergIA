@@ -13,9 +13,12 @@ manage_data.clean_data()
 conn = pymysql.connect(host="localhost", user="root", password="root", database="EnergIA")
 cur = conn.cursor()
 
-files = {"Building": "building.csv", "Sensor": "sensor.csv", "Measure": "clean_global.csv", "Error": "error_measure.csv"}
+csv_out_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/processed/'))
+
+
+files = {"Building": csv_out_path+"building.csv", "Sensor": csv_out_path+"sensor.csv", "Measure":csv_out_path + "clean_global.csv"}
 for file in files:
-    with open("data/processed/" + files[file], "r", newline='') as csvfile:
+    with open(files[file], "r", newline='') as csvfile:
         reader = csv.reader(csvfile)
         header = next(reader)
         print(header)
