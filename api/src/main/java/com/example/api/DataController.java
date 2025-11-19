@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -177,7 +179,10 @@ public class DataController {
         @GetMapping("/run")
         public ResponseEntity<String> runPythonScript() {
             try {
-                ProcessBuilder processBuilder = new ProcessBuilder("python3", "../../../../");
+                String projectRoot = System.getProperty("user.dir"); // Racine d'exécution
+                Path scriptPath = Paths.get(projectRoot, "../scripts/manage.py").normalize();
+                ProcessBuilder processBuilder = new ProcessBuilder("python3", scriptPath.toString());
+                processBuilder.environment().put("PYTHONPATH", "../data/scripts");
                 processBuilder.redirectErrorStream(true);
                 Process process = processBuilder.start();
 
