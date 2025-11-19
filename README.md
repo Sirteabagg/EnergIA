@@ -49,10 +49,10 @@ EnergIA vise à fournir une solution complète pour :
 
 3. Configurez la base de données MySQL :
 
-   - Créez une base de données `EngIA`.
+   - Créez une base de données `EnergIA`.
    - Exécutez le script `db/schema.sql` pour créer les tables :
      ```bash
-     mysql -u root -p EngIA < db/schema.sql
+     mysql -u root -p EnergIA < db/schema.sql
      ```
 
 4. Compilez et démarrez l'API Spring Boot :
