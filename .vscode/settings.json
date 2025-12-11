@@ -1,6 +1,0 @@
-{
-  "python.analysis.extraPaths": [
-    "./data/scripts"
-  ],
-  "java.configuration.updateBuildConfiguration": "interactive"
-}
