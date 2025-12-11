@@ -125,8 +125,6 @@ EnergIA/
 ## Contributeurs
 
 - **Ethan** - Développeur principal
-- **Sirteabagg** - Responsable du projet
-
 ---
 
 ## Licence
