@@ -27,7 +27,7 @@ public class DataController {
         String dbName = "EnergIA";
         // On crée la connexion à la base EnergIA
         ConnectionDAO connectionDAO = ConnectionDAO.getInstance(dbName, dbUser, dbPassword);
-        MeasureDAO measureDAO = new MeasureDAO(connectionDAO);
+        MeasureDAO measureDAO = new MeasureDAO();
         BuildingDAO buildingDAO = new BuildingDAO(connectionDAO);
         SensorDAO sensorDAO = new SensorDAO(connectionDAO);
         ErrorDAO errorDAO = new ErrorDAO(connectionDAO);
@@ -84,7 +84,7 @@ public class DataController {
         String dbPassword = "root";
         String dbName = "EnergIA";
         ConnectionDAO connectionDAO = ConnectionDAO.getInstance(dbName, dbUser, dbPassword);
-        MeasureDAO measureDAO = new MeasureDAO(connectionDAO);
+        MeasureDAO measureDAO = new MeasureDAO();
 
         List<MeasureDAO.AverageConsumption> rawResults = new ArrayList<>();
 
@@ -123,7 +123,7 @@ public class DataController {
         String dbPassword = "root";
         String dbName = "EnergIA";
         ConnectionDAO connectionDAO = ConnectionDAO.getInstance(dbName, dbUser, dbPassword);
-        MeasureDAO measureDAO = new MeasureDAO(connectionDAO);
+        MeasureDAO measureDAO = new MeasureDAO();
         BuildingDAO buildingDAO = new BuildingDAO(connectionDAO);
 
         String building_name = "";

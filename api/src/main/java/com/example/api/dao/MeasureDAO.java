@@ -11,7 +11,7 @@ public class MeasureDAO {
 
     private static ConnectionDAO connectionDAO;
 
-    public MeasureDAO(ConnectionDAO connectionDAO) {
+    public MeasureDAO() {
         this.connectionDAO = connectionDAO;
     }
 
